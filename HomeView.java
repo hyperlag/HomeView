@@ -1,4 +1,3 @@
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,7 +17,8 @@ public class HomeView {
 
         Properties properties = new Properties();
         try {
-            properties.load(Files.newInputStream(Paths.get("args[0]")));
+            System.out.println("Loading properties: " + args[0]);
+            properties.load(Files.newInputStream(Paths.get(args[0])));
         } catch (IOException e) {
             System.err.println("TODO: Handle IO exception #1");
             return;
@@ -26,5 +26,23 @@ public class HomeView {
 
         SerialHelper gasMeter = new SerialHelper(properties.getProperty("gasTty"),
                 Integer.parseInt(properties.getProperty("gasBaud")));
+
+        SerialHelper airEx = new SerialHelper(properties.getProperty("airExTty"),
+                Integer.parseInt(properties.getProperty("airExBaud")));
+
+
+//        System.out.println("Starting Air Exchanger");
+//        airEx.writeLine("+");
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        System.out.println("Starting Air Exchanger");
+//        airEx.writeLine("-");
+
+        while (true) {
+            System.out.println("String from gas monitor: " +  gasMeter.readLine(100000));
+        }
     }
 }
