@@ -22,11 +22,12 @@ public class SerialHelper {
                 }
                 return String.join("", chars);
             } catch (SerialPortException | SerialPortTimeoutException e) {
-                throw new RuntimeException(e);
+                System.err.println("Error #9374: " + e.getLocalizedMessage());
             }
         } else {
             return null;
         }
+        return null;
     }
 
     public void writeLine(String stringToWrite) {
@@ -34,7 +35,7 @@ public class SerialHelper {
             try {
                 serialPort.writeString(stringToWrite);
             } catch (SerialPortException e) {
-                throw new RuntimeException(e);
+                System.err.println("Error #231: " + e.getLocalizedMessage());
             }
         }
     }
@@ -47,7 +48,7 @@ public class SerialHelper {
             serialPort.setParams(baud, 8, 0, 0);
         }
         catch (SerialPortException ex) {
-            System.out.println(ex.getLocalizedMessage());
+            System.err.println("Error #8764 " + ex.getLocalizedMessage());
         }
 
     }
@@ -57,7 +58,7 @@ public class SerialHelper {
             serialPort.closePort();
         }
         catch (SerialPortException ex) {
-            System.out.println(ex.getLocalizedMessage());
+            System.err.println("Error #78423 " + ex.getLocalizedMessage());
         }
     }
 
