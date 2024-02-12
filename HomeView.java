@@ -24,8 +24,11 @@ public class HomeView {
             return;
         }
 
-        SerialHelper gasMeter = new SerialHelper(properties.getProperty("gasTty"),
-                Integer.parseInt(properties.getProperty("gasBaud")));
+        String gasTty = properties.getProperty("gasTty");
+        int gasBaud = Integer.parseInt(properties.getProperty("gasBaud"));
+
+//        SerialHelper gasMeter = new SerialHelper(properties.getProperty("gasTty"),
+//                Integer.parseInt(properties.getProperty("gasBaud")));
 
         SerialHelper airEx = new SerialHelper(properties.getProperty("airExTty"),
                 Integer.parseInt(properties.getProperty("airExBaud")));
@@ -40,9 +43,16 @@ public class HomeView {
 //        }
 //        System.out.println("Starting Air Exchanger");
 //        airEx.writeLine("-");
+        GasMeter gasMeter = new GasMeter(gasTty, gasBaud, 100000);
+        gasMeter.run();
 
-        while (true) {
-            System.out.println("String from gas monitor: " +  gasMeter.readLine(100000));
+        try{
+            while (true) {
+                Thread.sleep(1000);
+                System.out.println("Gas CO2: " + gasMeter.getCo2());
+            }
+        } catch (Exception e) {
+
         }
     }
 }
