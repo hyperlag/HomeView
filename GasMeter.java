@@ -3,7 +3,7 @@ public class GasMeter {
     private int co2; //CO2 ppm
     private int tvoc; //TVOC ppb
     private int readTimeout; //ms
-    private int lastUpdateTime; //TODO
+    private long lastUpdateTime = 0;
 
     private boolean alive;
     public GasMeter(String tty, int baud, int readTimeout) {
@@ -32,6 +32,10 @@ public class GasMeter {
         return tvoc;
     }
 
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
     public void stop() {
         alive = false;
     }
@@ -43,6 +47,7 @@ public class GasMeter {
             if (line.contains("CO2")) {
                 co2 = Integer.parseInt(line.split(",")[0].split(" ")[1].split("ppm")[0]);
                 tvoc = Integer.parseInt(line.split(",")[1].split(" ")[2].split("ppb")[0]);
+                lastUpdateTime = System.currentTimeMillis();
                 return true;
             }
         }

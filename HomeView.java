@@ -47,10 +47,16 @@ public class HomeView {
         gasMeter.run();
 
         try{
+            long lastUpdate = 0;
+
             while (true) {
                 Thread.sleep(1000);
-                System.out.println("Gas CO2: " + gasMeter.getCo2());
-                System.out.println("Gas TVOC: " + gasMeter.getTvoc());
+                long curUpdate = gasMeter.getLastUpdateTime();
+                if (lastUpdate < curUpdate) {
+                    System.out.println("Gas CO2: " + gasMeter.getCo2());
+                    System.out.println("Gas TVOC: " + gasMeter.getTvoc());
+                    lastUpdate = curUpdate;
+                }
             }
         } catch (Exception e) {
 
