@@ -50,6 +50,7 @@ public class HomeView {
             while (true) {
                 Thread.sleep(1000);
                 System.out.println("Gas CO2: " + gasMeter.getCo2());
+                System.out.println("Gas TVOC: " + gasMeter.getTvoc());
             }
         } catch (Exception e) {
 
