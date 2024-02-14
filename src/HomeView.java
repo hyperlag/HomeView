@@ -27,11 +27,14 @@ public class HomeView {
         String gasTty = properties.getProperty("gasTty");
         int gasBaud = Integer.parseInt(properties.getProperty("gasBaud"));
 
+        String airExTty = properties.getProperty("airExTty");
+        int airExBaud = Integer.parseInt(properties.getProperty("airExBaud"));
+
 //        SerialHelper gasMeter = new SerialHelper(properties.getProperty("gasTty"),
 //                Integer.parseInt(properties.getProperty("gasBaud")));
 
-        SerialHelper airEx = new SerialHelper(properties.getProperty("airExTty"),
-                Integer.parseInt(properties.getProperty("airExBaud")));
+//        SerialHelper airEx = new SerialHelper(properties.getProperty("airExTty"),
+//                Integer.parseInt(properties.getProperty("airExBaud")));
 
 
 //        System.out.println("Starting Air Exchanger");
@@ -45,6 +48,9 @@ public class HomeView {
 //        airEx.writeLine("-");
         GasMeter gasMeter = new GasMeter(gasTty, gasBaud, 100000);
         gasMeter.run();
+
+        AirEx airEx = new AirEx(airExTty, airExBaud);
+        airEx.startCycleThread(60000, 180000);
 
         try{
             long lastUpdate = 0;

@@ -41,7 +41,6 @@ public class GasMeter {
     }
     private boolean readValues() {
         String line = serialHelper.readLine(readTimeout);
-        System.out.println(line); //TODO: Remove this
         //Try upt to 4 times to get a valid read. This gets rid of the initialization noise.
         for (int i = 0; i < 4; i++) {
             if (line.contains("CO2")) {
