@@ -2,6 +2,9 @@ import jssc.*;
 
 import java.util.ArrayList;
 
+/**
+ * Simple serial communication class based on JSSC.
+ */
 public class SerialHelper {
     private SerialPort serialPort;
     public SerialHelper(String tty, int baud) {
@@ -9,6 +12,14 @@ public class SerialHelper {
         connect(tty, baud);
     }
 
+    /**
+     * Read a line from the serial interface.
+     *
+     * Note: This will keep reading bytes until a newline is reached.
+     *
+     * @param timeoutMs Timeout to read each byte.
+     * @return The string read.
+     */
     public String readLine(int timeoutMs)  {
         if (serialPort != null) {
             try {
@@ -30,6 +41,11 @@ public class SerialHelper {
         return null;
     }
 
+    /**
+     * Writes a string to the serial device.
+     *
+     * @param stringToWrite The string to write.
+     */
     public void writeLine(String stringToWrite) {
         if (serialPort != null) {
             try {
@@ -40,6 +56,15 @@ public class SerialHelper {
         }
     }
 
+    /**
+     * Connect to the serial device.
+     *
+     * TODO: This is currently hard-coded to use 8 data bits, not stop bits, and no parity. It should be expanded to be
+     * generic and accept all of this by parameters
+     *
+     * @param tty Port to connect to
+     * @param baud Baud rate
+     */
     private void connect(String tty, int baud) {
         serialPort = new SerialPort(tty);
         try {
@@ -53,7 +78,10 @@ public class SerialHelper {
 
     }
 
-    private void disconnect(){
+    /**
+     * Close the connection to the port.
+     */
+    public void disconnect(){
         try {
             serialPort.closePort();
         }
