@@ -54,7 +54,8 @@ public class HomeViewClient {
                     Thread.sleep(2000); //TODO deal with this
                     //Make a copy of the server view them modify it before sending back
                     //TODO: Do some stuff here
-                    HomeViewDataCarrier responseView = new HomeViewDataCarrier(serverView);
+                    HomeViewDataCarrier responseView = desktop.getData();
+
                     oos.writeObject(responseView);
                 }
 

@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
@@ -33,12 +35,22 @@ public class HomeViewDesktop {
         c.gridx = 0;
         c.gridy = 1;
         panel.add(axOnB,c);
+        axOnB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                current.setAirExOn(true);
+            }
+        } );
 
         JButton axOffB = new JButton("Ax Off");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
         panel.add(axOffB,c);
+        axOffB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                current.setAirExOn(false);
+            }
+        } );
 
         JLabel axLoopL = new JLabel("Ax Loop");
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -52,7 +64,7 @@ public class HomeViewDesktop {
         c.gridy = 3;
         panel.add(axOnL,c);
 
-        JLabel axOffL = new JLabel("OFF");
+        axOffL = new JLabel("OFF");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 3;
@@ -128,14 +140,19 @@ public class HomeViewDesktop {
         update();
     }
 
+    public HomeViewDataCarrier getData() {
+        return current;
+    }
+
     public void update() {
         co2L.setText("CO2: " + current.getCo2() + "ppm");
         tvocL.setText("TVOC: " + current.getTvoc() + "ppb");
 
-        if(current.isAirExOn()) {
+        if(current.isAirExOn() && axOnL != null && axOffL != null) {
+            System.out.println("AxOn Update");
             axOnL.setForeground(Color.GREEN);
             axOffL.setForeground(Color.BLACK);
-        } else {
+        } else if (axOnL != null && axOffL != null) {
             axOnL.setForeground(Color.BLACK);
             axOffL.setForeground(Color.GREEN);
         }

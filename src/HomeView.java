@@ -90,6 +90,12 @@ public class HomeView {
 
                 System.out.println("View read");
                 while (viewIn != null && socket.isConnected()) { //Send a null to disconnect
+                    if (viewIn.isAirExOn()) {
+                        airEx.on();
+                    } else {
+                        airEx.off();
+                    }
+
                     //TODO: Process incoming object
                     System.out.println("Update read");
                     viewOut = new HomeViewDataCarrier(gasMeter, airEx);
