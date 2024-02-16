@@ -1,9 +1,14 @@
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
 public class HomeView {
+    private static ServerSocket server;
 
     //Gas = ttyUSB1
     //AirEx = /dev/ttyUSB0
@@ -30,6 +35,9 @@ public class HomeView {
         String airExTty = properties.getProperty("airExTty");
         int airExBaud = Integer.parseInt(properties.getProperty("airExBaud"));
 
+        int serverPort = Integer.parseInt(properties.getProperty("serverPort"));
+
+
 //        SerialHelper gasMeter = new SerialHelper(properties.getProperty("gasTty"),
 //                Integer.parseInt(properties.getProperty("gasBaud")));
 
@@ -50,10 +58,11 @@ public class HomeView {
         gasMeter.run();
 
         AirEx airEx = new AirEx(airExTty, airExBaud);
-        airEx.startCycleThread(60000, 180000);
+//        airEx.startCycleThread(60000, 180000);
 
         try{
             long lastUpdate = 0;
+            server = new ServerSocket(serverPort);
 
             while (true) {
                 Thread.sleep(1000);
@@ -63,9 +72,40 @@ public class HomeView {
                     System.out.println("Gas TVOC: " + gasMeter.getTvoc());
                     lastUpdate = curUpdate;
                 }
+
+                //Server code
+                Socket socket = server.accept();
+                System.out.println("New server connection " + server.getInetAddress());
+
+
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                //oos.flush();
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
+                //Initialize
+                HomeViewDataCarrier viewOut = new HomeViewDataCarrier(gasMeter, airEx);
+                oos.writeObject(viewOut);
+
+                HomeViewDataCarrier viewIn = (HomeViewDataCarrier) ois.readObject();
+
+                System.out.println("View read");
+                while (viewIn != null && socket.isConnected()) { //Send a null to disconnect
+                    //TODO: Process incoming object
+                    System.out.println("Update read");
+                    viewOut = new HomeViewDataCarrier(gasMeter, airEx);
+                    oos.writeObject(viewOut);
+                    viewIn = (HomeViewDataCarrier) ois.readObject();
+                    Thread.sleep(500); //TODO deal with this
+                }
+
+
+                oos.close();
+                ois.close();
+                socket.close();
             }
         } catch (Exception e) {
-
+            System.err.println("Error  #1 " + e.getMessage());
         }
     }
+
 }

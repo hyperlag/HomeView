@@ -24,7 +24,6 @@ public class SerialHelper {
         if (serialPort != null) {
             try {
                 ArrayList<String> chars = new ArrayList<String>();
-                System.out.println("Attempting Read");
                 for (int i=0;i<100;i++) {
                     chars.add(serialPort.readString(1, timeoutMs));
                     if(chars.get(i).equals("\n")){

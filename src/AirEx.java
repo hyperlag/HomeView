@@ -1,6 +1,9 @@
 public class AirEx {
     private SerialHelper serialHelper;
     private boolean cycling = false;
+    private boolean isOn = false;
+
+    private long[] onOff = new long[]{-1, -1};
 
     public AirEx(String tty, int baud) {
         serialHelper = new SerialHelper(tty, baud);
@@ -12,6 +15,7 @@ public class AirEx {
      */
     public void on(){
         serialHelper.writeLine("+");
+        isOn = true;
         System.out.println("Turning Air Exchanger on");
     }
 
@@ -20,6 +24,7 @@ public class AirEx {
      */
     public void off(){
         serialHelper.writeLine("-");
+        isOn = false;
         System.out.println("Turning Air Exchanger off");
     }
 
@@ -71,6 +76,8 @@ public class AirEx {
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
+                onOff[0] = msOn;
+                onOff[1] = msOff;
                 cycle(msOn, msOff);
             }
         });
@@ -85,6 +92,18 @@ public class AirEx {
     public void stopCycleThread() {
         cycling = false;
         off();
+    }
+
+    public boolean isOn() {
+        return isOn;
+    }
+
+    public boolean isCycling(){
+        return cycling;
+    }
+
+    public long[] getCycleTimes(){
+        return onOff;
     }
 
     private boolean sleep(long ms) {
