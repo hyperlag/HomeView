@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="HomeViewClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/HomeViewClient_jar</output-path>
+    <root id="archive" name="HomeViewClient.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/Client/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="HomeView" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/scream3r/jssc/2.8.0/jssc-2.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-io/commons-io/2.12.0/commons-io-2.12.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

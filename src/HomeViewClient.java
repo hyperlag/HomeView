@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class HomeViewClient {
     public static void main(String[] args) {
-        System.out.println("Launching HomeView");
+        System.out.println("Launching HomeView Client");
         if (args.length != 1) {
             System.err.println("Error: Must supply properties file");
             return;
@@ -26,6 +26,8 @@ public class HomeViewClient {
 
         int serverPort = Integer.parseInt(properties.getProperty("serverPort"));
         String serverAddr = properties.getProperty("serverAddress");
+
+        HomeViewDesktop desktop = new HomeViewDesktop();
 
         try{
             while (true) {
@@ -46,6 +48,8 @@ public class HomeViewClient {
                     System.out.println("Air Exchanger On: " + serverView.isAirExOn());
                     System.out.println("Air Exchanger Cycling: " + serverView.isAirExCycling());
                     System.out.println("------------------------------------");
+
+                    desktop.consume(serverView);
 
                     Thread.sleep(2000); //TODO deal with this
                     //Make a copy of the server view them modify it before sending back
