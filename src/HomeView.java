@@ -1,8 +1,10 @@
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -88,34 +90,53 @@ public class HomeView {
 
                 Thread.sleep(500); //TODO deal with
 
-                HomeViewDataCarrier viewIn = (HomeViewDataCarrier) ois.readObject();
+                HomeViewDataCarrier viewIn = null;
+                try {
+                    viewIn = (HomeViewDataCarrier) ois.readObject();
+                } catch (EOFException eofException) {
+                    System.err.println("Error #98474: Corrupt message. Ignoring");
+                }
 
                 System.out.println("View read");
-                while (viewIn != null && socket.isConnected()) { //Send a null to disconnect
-                    if (viewIn.isAirExOn()) {
-                        airEx.on();
-                    } else {
-                        airEx.off();
-                    }
+                while (socket.isConnected()) {
+                    if (viewIn != null) {
+                        if (viewIn.isAirExOn()) {
+                            airEx.on();
+                        } else {
+                            airEx.off();
+                        }
 
-                    if (viewIn.isAirExCycling()) {
-                        System.out.println("Server received a cycle command");
+                        if (viewIn.isAirExCycling()) {
+                            System.out.println("Server received a cycle command");
+                            Thread.sleep(100); //TODO
+                            airEx.startCycleThread(viewIn.getAirExCycleOnOffMs()[0], viewIn.getAirExCycleOnOffMs()[1]);
+                        } else if (airEx.isCycling()) {
+                            System.out.println("Server received a STOP cycle command");
+                            airEx.stopCycleThread();
+                        }
+
+                        Thread.sleep(1000);
+                        //TODO: Process incoming object
+                        System.out.println("Update read");
+                        viewOut = new HomeViewDataCarrier(gasMeter, airEx);
+                        System.out.println("View Out " + viewOut.getAirExCycleOnOffMs()[0] + " " + airEx.getCycleTimes()[0]);
+                        try {
+                            oos.writeObject(viewOut); //TODO somehow the cycle times always leave here as -1 despite this ^
+                        } catch (Exception e) {
+                            System.err.println("Error# 8723648: Unable to contact server. Oh well.");
+                        }
                         Thread.sleep(100); //TODO
-                        airEx.startCycleThread(viewIn.getAirExCycleOnOffMs()[0], viewIn.getAirExCycleOnOffMs()[1]);
-                    } else if (airEx.isCycling()){
-                        System.out.println("Server received a STOP cycle command");
-                        airEx.stopCycleThread();
+                        try {
+                            viewIn = (HomeViewDataCarrier) ois.readObject();
+                        } catch (EOFException e) {
+                            System.err.println("Error # 5468334: Client not responding. Whatever I guess.");
+                        } catch (SocketException se) {
+                            System.err.println("Client disconnected. Recycling socket.");
+                            break;
+                        }
                     }
-
-                    Thread.sleep(1000);
-                    //TODO: Process incoming object
-                    System.out.println("Update read");
-                    viewOut = new HomeViewDataCarrier(gasMeter, airEx);
-                    System.out.println("View Out " + viewOut.getAirExCycleOnOffMs()[0] + " " + airEx.getCycleTimes()[0]);
-                    oos.writeObject(viewOut); //TODO somehow the cycle times always leave here as -1 despite this ^
-                    Thread.sleep(100); //TODO
-                    viewIn = (HomeViewDataCarrier) ois.readObject();
                     Thread.sleep(100); //TODO deal with this
+                    System.out.println("Loop");
                 }
 
 
@@ -124,7 +145,8 @@ public class HomeView {
                 socket.close();
             }
         } catch (Exception e) {
-            System.err.println("Error  #1 " + e.getMessage());
+            System.err.println("Error  #1 " + e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
