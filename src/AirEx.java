@@ -3,7 +3,10 @@ public class AirEx {
     private boolean cycling = false;
     private boolean isOn = false;
 
-    private long[] onOff = new long[]{-1, -1};
+    private long cycleOnMs = -1;
+    private long cycleOffMs = -1;
+
+    //private long[] onOff = new long[]{-1, -1};
 
     public AirEx(String tty, int baud) {
         serialHelper = new SerialHelper(tty, baud);
@@ -83,8 +86,8 @@ public class AirEx {
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
-                onOff[0] = msOn;
-                onOff[1] = msOff;
+                cycleOnMs = msOn;
+                cycleOffMs = msOff;
                 cycle(msOn, msOff);
             }
         });
@@ -111,7 +114,7 @@ public class AirEx {
     }
 
     public long[] getCycleTimes(){
-        return onOff;
+        return new long[] {cycleOnMs, cycleOffMs};
     }
 
     private boolean sleep(long ms) {

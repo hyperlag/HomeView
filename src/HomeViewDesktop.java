@@ -51,6 +51,7 @@ public class HomeViewDesktop {
         panel.add(axOnB,c);
         axOnB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                current.setAirExCycling(false);
                 current.setAirExOn(true);
             }
         } );
@@ -62,6 +63,7 @@ public class HomeViewDesktop {
         panel.add(axOffB,c);
         axOffB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                current.setAirExCycling(false);
                 current.setAirExOn(false);
             }
         } );
