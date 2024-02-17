@@ -74,6 +74,12 @@ public class AirEx {
      */
     public void startCycleThread(long msOn, long msOff) {
         System.out.println("Starting cycle " + msOn + " " + msOff);
+
+        if (msOn < 30000 || msOff < 30000) {
+            cycling = false;
+            System.err.println("Error 30s minimum cycle time");
+            return;
+        }
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {

@@ -42,11 +42,14 @@ public class HomeViewClient {
 
                 while (socket.isConnected()) {
                     System.out.println("Reading Object");
-                    HomeViewDataCarrier serverView = (HomeViewDataCarrier) ois.readObject();
+                    HomeViewDataCarrier serverView = new HomeViewDataCarrier((HomeViewDataCarrier) ois.readObject());
                     System.out.println("Server Update received from " + serverAddr);
-                    System.out.println("CO2: " + serverView.getCo2() + "ppm |  TVOC: " + serverView.getTvoc() );
+                    System.out.println("CO2: " + serverView.getCo2() + "ppm |  TVOC: " + serverView.getTvoc() +"ppb");
                     System.out.println("Air Exchanger On: " + serverView.isAirExOn());
                     System.out.println("Air Exchanger Cycling: " + serverView.isAirExCycling());
+                    //TODO: Figure out why cycle times are always -1 despite what is in the server object
+                    System.out.println("Cycle On: " + serverView.getAirExCycleOnOffMs()[0]);
+                    System.out.println("Cycle Off: " + serverView.getAirExCycleOnOffMs()[1]);
                     System.out.println("------------------------------------");
 
                     desktop.consume(serverView);

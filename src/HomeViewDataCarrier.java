@@ -1,6 +1,7 @@
 import java.io.Serializable;
 
 public class HomeViewDataCarrier implements Serializable {
+    private static final long serialVersionUID = 1L;
     //Gas Meter Values
     private int co2 = -1;
     private int tvoc = -1;
@@ -45,7 +46,8 @@ public class HomeViewDataCarrier implements Serializable {
         airExCycleOnOffMs = airEx.getCycleTimes();
     }
 
-    public HomeViewDataCarrier(int co2, int tvoc, long lastGasEpoc, boolean airExOn, boolean airExCycling, long[] airExCycleOnOffMs) {
+    public HomeViewDataCarrier(int co2, int tvoc, long lastGasEpoc, boolean airExOn, boolean airExCycling,
+                               long[] airExCycleOnOffMs) {
         this.co2 = co2;
         this.tvoc = tvoc;
         this.lastGasEpoc = lastGasEpoc;

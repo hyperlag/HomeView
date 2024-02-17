@@ -86,6 +86,8 @@ public class HomeView {
                 HomeViewDataCarrier viewOut = new HomeViewDataCarrier(gasMeter, airEx);
                 oos.writeObject(viewOut);
 
+                Thread.sleep(500); //TODO deal with
+
                 HomeViewDataCarrier viewIn = (HomeViewDataCarrier) ois.readObject();
 
                 System.out.println("View read");
@@ -97,18 +99,23 @@ public class HomeView {
                     }
 
                     if (viewIn.isAirExCycling()) {
-                        airEx.stopCycleThread(); // Kill any old thread
-                        airEx.startCycleThread(viewIn.getAirExCycleOnOffMs()[0],viewIn.getAirExCycleOnOffMs()[1]);
-                    } else {
+                        System.out.println("Server received a cycle command");
+                        Thread.sleep(100); //TODO
+                        airEx.startCycleThread(viewIn.getAirExCycleOnOffMs()[0], viewIn.getAirExCycleOnOffMs()[1]);
+                    } else if (airEx.isCycling()){
+                        System.out.println("Server received a STOP cycle command");
                         airEx.stopCycleThread();
                     }
 
+                    Thread.sleep(1000);
                     //TODO: Process incoming object
                     System.out.println("Update read");
                     viewOut = new HomeViewDataCarrier(gasMeter, airEx);
-                    oos.writeObject(viewOut);
+                    System.out.println("View Out " + viewOut.getAirExCycleOnOffMs()[0] + " " + airEx.getCycleTimes()[0]);
+                    oos.writeObject(viewOut); //TODO somehow the cycle times always leave here as -1 despite this ^
+                    Thread.sleep(100); //TODO
                     viewIn = (HomeViewDataCarrier) ois.readObject();
-                    Thread.sleep(500); //TODO deal with this
+                    Thread.sleep(100); //TODO deal with this
                 }
 
 
