@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
@@ -14,6 +16,16 @@ public class HomeViewDesktop {
     private JLabel axOnL;
 
     private JLabel axOffL;
+    private JTextField axLoopOn;
+    private JTextField axLoopOff;
+    private JButton axLoopB;
+    private JButton axOnB;
+    private JButton axOffB;
+    private JLabel axOverL;
+
+    private long inputEpoch = 0;
+
+
 
     public HomeViewDesktop(){
 
@@ -22,15 +34,17 @@ public class HomeViewDesktop {
 
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
+
+        panel.setBackground(Color.BLACK);
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel AxOnTimeL = new JLabel("Override");
+        axOverL = new JLabel("Override");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
-        panel.add(AxOnTimeL,c);
+        panel.add(axOverL,c);
 
-        JButton axOnB = new JButton("Ax On");
+        axOnB = new JButton("Ax On");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
@@ -41,7 +55,7 @@ public class HomeViewDesktop {
             }
         } );
 
-        JButton axOffB = new JButton("Ax Off");
+        axOffB = new JButton("Ax Off");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -51,12 +65,6 @@ public class HomeViewDesktop {
                 current.setAirExOn(false);
             }
         } );
-
-        JLabel axLoopL = new JLabel("Ax Loop");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 2;
-        panel.add(axLoopL,c);
 
         axOnL = new JLabel("ON");
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -70,55 +78,90 @@ public class HomeViewDesktop {
         c.gridy = 3;
         panel.add(axOffL,c);
 
-        JTextField axLoopOn = new JTextField(7);
+        axLoopOn = new JTextField(7);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 4;
+        axLoopOn.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                inputEpoch = System.currentTimeMillis();
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
         panel.add(axLoopOn,c);
 
-        JTextField axLoopOff = new JTextField(7);
+        axLoopOff = new JTextField(7);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 4;
+        axLoopOff.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                inputEpoch = System.currentTimeMillis();
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         panel.add(axLoopOff,c);
+
+        axLoopB = new JButton("Ax Loop");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 5;
+        panel.add(axLoopB,c);
+        axLoopB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                current.setAirExCycling(true);
+                try {
+                    System.out.println("Setting up an ax loop");
+                    current.setAirExCycleOnOffMs(new long[]{Long.parseLong(axLoopOn.getText()) * 1000, Long.parseLong(axLoopOff.getText()) * 1000});
+                } catch (Exception ex) { //TODO: Change this to catch just the long format exception
+                    //TODO Ignore for now. The update will remove this
+                    System.err.println("Error #543897789 " + ex.getMessage());
+                }
+            }
+        } );
 
         JLabel AirQualityL = new JLabel("Air Quality");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy = 7;
+        AirQualityL.setForeground(Color.GREEN);
         panel.add(AirQualityL,c);
 
         co2L = new JLabel("CO2: -1 ppm");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 6;
+        c.gridy = 8;
+        co2L.setForeground(Color.GREEN);
         panel.add(co2L,c);
 
         tvocL = new JLabel("TVOC: -1 ppb");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 7;
+        c.gridy = 9;
+        tvocL.setForeground(Color.GREEN);
         panel.add(tvocL,c);
 
-
-
-
-
-
-//        JButton axOn = new JButton("AxOn");
-//        panel.add(axOn);
-//        JButton axOff = new JButton("AxOff");
-//        panel.add(axOn);
-
-//        JLabel AxOnTimeL = new JLabel("AxOn Cycle Time: ");
-//        panel.add(AxOnTimeL);
-//        JTextField AxOnTimeTf = new JTextField(6);
-//        panel.add(AxOnTimeTf);
-//
-//        JLabel AxOffTimeL = new JLabel("AxOff Cycle Time: ");
-//        panel.add(AxOffTimeL);
-//        JTextField AxOffTimeTf = new JTextField(6);
-//        panel.add(AxOffTimeTf);
 
 
 
@@ -127,7 +170,7 @@ public class HomeViewDesktop {
 
 
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(200, 220);
         System.out.println("Starting GUI... This may take a long time");
         frame.setVisible(true);
 
@@ -148,13 +191,31 @@ public class HomeViewDesktop {
         co2L.setText("CO2: " + current.getCo2() + "ppm");
         tvocL.setText("TVOC: " + current.getTvoc() + "ppb");
 
-        if(current.isAirExOn() && axOnL != null && axOffL != null) {
+        if (current.isAirExOn() && axOnL != null && axOffL != null && axOnB != null && axOffB != null) {
             System.out.println("AxOn Update");
             axOnL.setForeground(Color.GREEN);
-            axOffL.setForeground(Color.BLACK);
-        } else if (axOnL != null && axOffL != null) {
-            axOnL.setForeground(Color.BLACK);
+            axOffL.setForeground(Color.RED);
+            axOnB.setBackground(Color.GREEN);
+            axOffB.setBackground(Color.RED);
+        } else if (axOnL != null && axOffL != null && axOnB != null && axOffB != null) {
+            axOnL.setForeground(Color.RED);
             axOffL.setForeground(Color.GREEN);
+            axOnB.setBackground(Color.RED);
+            axOffB.setBackground(Color.GREEN);
+        }
+
+        //If user is typing give them 30 seconds to be done
+        if (axLoopOn != null && axLoopOff != null && (System.currentTimeMillis() - inputEpoch) > 30000) {
+            axLoopOn.setText(current.getAirExCycleOnOffMs()[0]/1000+"");
+            axLoopOff.setText(current.getAirExCycleOnOffMs()[1]/1000+"");
+        }
+
+        if (current.isAirExCycling() && axLoopB != null && axOverL != null) {
+            axLoopB.setBackground(Color.GREEN);
+            axOverL.setForeground(Color.RED);
+        } else if ( axLoopB != null && axOverL != null){
+            axLoopB.setBackground(Color.RED);
+            axOverL.setForeground(Color.GREEN);
         }
 
         panel.repaint();

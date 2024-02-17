@@ -96,6 +96,13 @@ public class HomeView {
                         airEx.off();
                     }
 
+                    if (viewIn.isAirExCycling()) {
+                        airEx.stopCycleThread(); // Kill any old thread
+                        airEx.startCycleThread(viewIn.getAirExCycleOnOffMs()[0],viewIn.getAirExCycleOnOffMs()[1]);
+                    } else {
+                        airEx.stopCycleThread();
+                    }
+
                     //TODO: Process incoming object
                     System.out.println("Update read");
                     viewOut = new HomeViewDataCarrier(gasMeter, airEx);

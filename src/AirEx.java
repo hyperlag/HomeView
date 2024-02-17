@@ -73,6 +73,7 @@ public class AirEx {
      * @param msOff Milliseconds to remain off.
      */
     public void startCycleThread(long msOn, long msOff) {
+        System.out.println("Starting cycle " + msOn + " " + msOff);
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
@@ -90,6 +91,7 @@ public class AirEx {
      * Note: This will complete the current on/off cycle before killing the thread.
      */
     public void stopCycleThread() {
+        System.out.println("Stopping AirEx cycle");
         cycling = false;
         off();
     }
