@@ -6,6 +6,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.data.time.Month;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -18,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import javax.swing.*;
@@ -193,17 +195,24 @@ public class HomeViewDesktop {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 10;
+        c.gridwidth = 3;
         panel.add(chartPanel,c);
-
+        chartPanel.setFillZoomRectangle(true);
+        chartPanel.setMouseWheelEnabled(true);
+        chartPanel.setBackground(Color.darkGray);
+        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        chartPanel.setVisible(true);
 
         frame.setContentPane(panel);
         //frame.add(panel);
 
 
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        frame.setSize(200, 220);
+        frame.setSize(550, 475);
         System.out.println("Starting GUI... This may take a long time");
         frame.setVisible(true);
+
+        frame.pack();
 
         System.out.println("GUI created");
 
@@ -216,8 +225,11 @@ public class HomeViewDesktop {
 
     public void consumeHistory(LinkedHashMap<Long,HomeViewDataCarrier> history) {
         this.history = history;
-        System.out.println("Debug line " + history.entrySet().iterator().next().getValue().getLastUpdateEpoch());
-        consume(history.entrySet().iterator().next().getValue()); //TODO: THis is probably pulling the wrong order
+        Long lastKey = history.keySet().iterator().next();
+        Iterator iterator = history.keySet().iterator();
+        while (iterator.hasNext()) {
+            lastKey = (Long) iterator.next();
+        }
     }
 
     public HomeViewDataCarrier getData() {
@@ -225,6 +237,7 @@ public class HomeViewDesktop {
     }
 
     public void update() {
+
         co2L.setText("CO2: " + current.getCo2() + "ppm");
         tvocL.setText("TVOC: " + current.getTvoc() + "ppb");
 
@@ -255,48 +268,75 @@ public class HomeViewDesktop {
             axOverL.setForeground(Color.GREEN);
         }
 
+
+        //This is terrible. Fix this
+        GridBagConstraints c = new GridBagConstraints();
+
+        chartPanel.setFillZoomRectangle(true);
+        chartPanel.setMouseWheelEnabled(true);
+        chartPanel.setBackground(Color.darkGray);
+        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        chartPanel.setVisible(true);
+        chartPanel.setChart(createChart());
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 10;
+        c.gridwidth = 3;
+
+        panel.add(chartPanel,c);
+
+
+
         panel.repaint();
     }
 
     private JFreeChart createChart() {
+        TimeSeries co2set = new TimeSeries("CO2 ppm");
+        TimeSeries tvocSet = new TimeSeries("TVOC ppb*100");
         if (history != null) {
-            TimeSeries co2set = new TimeSeries("CO2");
+            co2set = new TimeSeries("CO2");
             Set<Long> keys = history.keySet();
             for (Long key : keys) {
                 co2set.add(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getCo2());
+                tvocSet.add(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getTvoc()*100);
             }
-            TimeSeriesCollection dataset = new TimeSeriesCollection();
-            dataset.addSeries(co2set);
-            JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                    "CO2",
-                    "Time",
-                    "Air Quality CO2",  // titlTime",   // y-axis label
-                    dataset);
-
-            chart.setBackgroundPaint(Color.WHITE);
-
-            XYPlot plot = (XYPlot) chart.getPlot();
-            plot.setBackgroundPaint(Color.LIGHT_GRAY);
-            plot.setDomainGridlinePaint(Color.WHITE);
-            plot.setRangeGridlinePaint(Color.WHITE);
-            plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-            plot.setDomainCrosshairVisible(true);
-            plot.setRangeCrosshairVisible(true);
-
-            XYItemRenderer r = plot.getRenderer();
-            if (r instanceof XYLineAndShapeRenderer) {
-                XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-                renderer.setDefaultShapesVisible(true);
-                renderer.setDefaultShapesFilled(true);
-                renderer.setDrawSeriesLineAsPath(true);
-            }
-
-            DateAxis axis = (DateAxis) plot.getDomainAxis();
-            axis.setDateFormatOverride(new SimpleDateFormat("ss"));
-
-            return chart;
-        } else {
-            return null;
         }
+
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+
+        dataset.addSeries(co2set);
+        dataset.addSeries(tvocSet);
+
+
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                "Air Quality CO2",
+                "Time",
+                "Gas Levels",
+                dataset);
+
+        chart.setBackgroundPaint(Color.BLACK);
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.darkGray);
+        plot.setDomainGridlinePaint(Color.WHITE);
+        plot.setRangeGridlinePaint(Color.WHITE);
+        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);
+
+        XYItemRenderer r = plot.getRenderer();
+        if (r instanceof XYLineAndShapeRenderer) {
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+            renderer.setDefaultShapesVisible(true);
+            renderer.setDefaultShapesFilled(true);
+            renderer.setDrawSeriesLineAsPath(true);
+        }
+
+        DateAxis axis = (DateAxis) plot.getDomainAxis();
+        axis.setDateFormatOverride(new SimpleDateFormat("ss"));
+
+        return chart;
+
     }
 }

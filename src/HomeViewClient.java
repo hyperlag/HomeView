@@ -52,7 +52,8 @@ public class HomeViewClient {
                 while (socket.isConnected()) {
                     System.out.println("Reading Object");
                     HomeViewDataCarrier serverView = new HomeViewDataCarrier((HomeViewDataCarrier) ois.readObject());
-                    if (serverView != null) {
+                    if (serverView != null && !history.containsKey(serverView.getLastUpdateEpoch())) {
+                        System.out.println("Debug New Key " + serverView.getLastUpdateEpoch());
                         history.put(serverView.getLastUpdateEpoch(), serverView);
                     }
                     System.out.println("Server Update received from " + serverAddr);
@@ -64,8 +65,9 @@ public class HomeViewClient {
                     System.out.println("Cycle Off: " + serverView.getAirExCycleOnOffMs()[1]);
                     System.out.println("------------------------------------");
 
-//                    desktop.consume(serverView);
                     desktop.consumeHistory(history);
+                    desktop.consume(serverView);
+
 
                     Thread.sleep(2000); //TODO deal with this
                     //Make a copy of the server view them modify it before sending back
