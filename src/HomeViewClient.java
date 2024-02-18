@@ -33,11 +33,11 @@ public class HomeViewClient {
         try{
             while (true) {
 
-                LinkedHashMap<Long,HomeViewDataCarrier> history = new LinkedHashMap<Long,HomeViewDataCarrier>(){
+                LinkedHashMap<Long,HomeViewDataCarrier> history = new LinkedHashMap<>(){
                     @Override
                     protected boolean removeEldestEntry(Map.Entry<Long, HomeViewDataCarrier> eldest)
                     {
-                        return this.size() > 10; //Mac 100 entries
+                        return this.size() > 10; //Max 100 entries
                     }
                 };
 
@@ -64,7 +64,8 @@ public class HomeViewClient {
                     System.out.println("Cycle Off: " + serverView.getAirExCycleOnOffMs()[1]);
                     System.out.println("------------------------------------");
 
-                    desktop.consume(serverView);
+//                    desktop.consume(serverView);
+                    desktop.consumeHistory(history);
 
                     Thread.sleep(2000); //TODO deal with this
                     //Make a copy of the server view them modify it before sending back

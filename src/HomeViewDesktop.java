@@ -1,8 +1,25 @@
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Set;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
@@ -24,6 +41,9 @@ public class HomeViewDesktop {
     private JLabel axOverL;
 
     private long inputEpoch = 0;
+    private ChartPanel chartPanel;
+
+    private LinkedHashMap<Long,HomeViewDataCarrier> history;
 
 
 
@@ -169,7 +189,11 @@ public class HomeViewDesktop {
         tvocL.setForeground(Color.GREEN);
         panel.add(tvocL,c);
 
-
+        chartPanel = new ChartPanel(createChart(), false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 10;
+        panel.add(chartPanel,c);
 
 
         frame.setContentPane(panel);
@@ -188,6 +212,12 @@ public class HomeViewDesktop {
     public void consume (HomeViewDataCarrier data) {
         current = data;
         update();
+    }
+
+    public void consumeHistory(LinkedHashMap<Long,HomeViewDataCarrier> history) {
+        this.history = history;
+        System.out.println("Debug line " + history.entrySet().iterator().next().getValue().getLastUpdateEpoch());
+        consume(history.entrySet().iterator().next().getValue()); //TODO: THis is probably pulling the wrong order
     }
 
     public HomeViewDataCarrier getData() {
@@ -226,5 +256,47 @@ public class HomeViewDesktop {
         }
 
         panel.repaint();
+    }
+
+    private JFreeChart createChart() {
+        if (history != null) {
+            TimeSeries co2set = new TimeSeries("CO2");
+            Set<Long> keys = history.keySet();
+            for (Long key : keys) {
+                co2set.add(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getCo2());
+            }
+            TimeSeriesCollection dataset = new TimeSeriesCollection();
+            dataset.addSeries(co2set);
+            JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                    "CO2",
+                    "Time",
+                    "Air Quality CO2",  // titlTime",   // y-axis label
+                    dataset);
+
+            chart.setBackgroundPaint(Color.WHITE);
+
+            XYPlot plot = (XYPlot) chart.getPlot();
+            plot.setBackgroundPaint(Color.LIGHT_GRAY);
+            plot.setDomainGridlinePaint(Color.WHITE);
+            plot.setRangeGridlinePaint(Color.WHITE);
+            plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+            plot.setDomainCrosshairVisible(true);
+            plot.setRangeCrosshairVisible(true);
+
+            XYItemRenderer r = plot.getRenderer();
+            if (r instanceof XYLineAndShapeRenderer) {
+                XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+                renderer.setDefaultShapesVisible(true);
+                renderer.setDefaultShapesFilled(true);
+                renderer.setDrawSeriesLineAsPath(true);
+            }
+
+            DateAxis axis = (DateAxis) plot.getDomainAxis();
+            axis.setDateFormatOverride(new SimpleDateFormat("ss"));
+
+            return chart;
+        } else {
+            return null;
+        }
     }
 }
