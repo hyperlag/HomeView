@@ -1,10 +1,11 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class HomeViewClient {
@@ -32,6 +33,14 @@ public class HomeViewClient {
         try{
             while (true) {
 
+                LinkedHashMap<Long,HomeViewDataCarrier> history = new LinkedHashMap<Long,HomeViewDataCarrier>(){
+                    @Override
+                    protected boolean removeEldestEntry(Map.Entry<Long, HomeViewDataCarrier> eldest)
+                    {
+                        return this.size() > 10; //Mac 100 entries
+                    }
+                };
+
                 //Server code
                 Socket socket =  new Socket(serverAddr, serverPort);
                 System.out.println("Connecting to server " + serverAddr + ":" + serverPort);
@@ -43,6 +52,9 @@ public class HomeViewClient {
                 while (socket.isConnected()) {
                     System.out.println("Reading Object");
                     HomeViewDataCarrier serverView = new HomeViewDataCarrier((HomeViewDataCarrier) ois.readObject());
+                    if (serverView != null) {
+                        history.put(serverView.getLastUpdateEpoch(), serverView);
+                    }
                     System.out.println("Server Update received from " + serverAddr);
                     System.out.println("CO2: " + serverView.getCo2() + "ppm |  TVOC: " + serverView.getTvoc() +"ppb");
                     System.out.println("Air Exchanger On: " + serverView.isAirExOn());

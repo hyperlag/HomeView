@@ -11,9 +11,10 @@ public class HomeViewDataCarrier implements Serializable {
     private boolean airExOn = false;
     private boolean airExCycling = false;
     private long[] airExCycleOnOffMs = new long[]{-1, -1};
+    private long lastUpdateEpoch;
 
     public HomeViewDataCarrier(){
-
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public HomeViewDataCarrier(HomeViewDataCarrier toCopy){
@@ -23,18 +24,21 @@ public class HomeViewDataCarrier implements Serializable {
         this.airExOn = toCopy.isAirExOn();
         this.airExCycling = toCopy.isAirExCycling();
         this.airExCycleOnOffMs = toCopy.getAirExCycleOnOffMs();;
+        this.lastUpdateEpoch = toCopy.getLastUpdateEpoch();
     }
 
     public HomeViewDataCarrier(GasMeter gasMeter) {
         co2 = gasMeter.getCo2();
         tvoc = gasMeter.getTvoc();
         lastGasEpoc = gasMeter.getLastUpdateTime();
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public HomeViewDataCarrier(AirEx airEx) {
         airExOn = airEx.isOn();
         airExCycling = airEx.isCycling();
         airExCycleOnOffMs = airEx.getCycleTimes();
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public HomeViewDataCarrier(GasMeter gasMeter, AirEx airEx) {
@@ -44,6 +48,7 @@ public class HomeViewDataCarrier implements Serializable {
         airExOn = airEx.isOn();
         airExCycling = airEx.isCycling();
         airExCycleOnOffMs = airEx.getCycleTimes();
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public HomeViewDataCarrier(int co2, int tvoc, long lastGasEpoc, boolean airExOn, boolean airExCycling,
@@ -54,6 +59,7 @@ public class HomeViewDataCarrier implements Serializable {
         this.airExOn = airExOn;
         this.airExCycling = airExCycling;
         this.airExCycleOnOffMs = airExCycleOnOffMs;
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public int getCo2() {
@@ -82,10 +88,12 @@ public class HomeViewDataCarrier implements Serializable {
 
     public void setCo2(int co2) {
         this.co2 = co2;
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public void setTvoc(int tvoc) {
         this.tvoc = tvoc;
+        lastUpdateEpoch = System.currentTimeMillis();
     }
 
     public void setLastGasEpoc(long lastGasEpoc) {
@@ -102,6 +110,14 @@ public class HomeViewDataCarrier implements Serializable {
 
     public void setAirExCycleOnOffMs(long[] airExCycleOnOffMs) {
         this.airExCycleOnOffMs = airExCycleOnOffMs;
+    }
+
+    public long getLastUpdateEpoch() {
+        return lastUpdateEpoch;
+    }
+
+    public void setLastUpdateEpoch(long lastUpdateEpoch) {
+        this.lastUpdateEpoch = lastUpdateEpoch;
     }
 
 }

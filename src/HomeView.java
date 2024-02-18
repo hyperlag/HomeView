@@ -123,15 +123,20 @@ public class HomeView {
                         try {
                             oos.writeObject(viewOut); //TODO somehow the cycle times always leave here as -1 despite this ^
                         } catch (Exception e) {
-                            System.err.println("Error# 8723648: Unable to contact server. Oh well.");
+                            System.err.println("Error# 8723648: Unable to contact client. Oh well.");
+                            socket.close();
+                            break;
                         }
                         Thread.sleep(100); //TODO
                         try {
                             viewIn = (HomeViewDataCarrier) ois.readObject();
                         } catch (EOFException e) {
                             System.err.println("Error # 5468334: Client not responding. Whatever I guess.");
+                            socket.close();
+                            break;
                         } catch (SocketException se) {
                             System.err.println("Client disconnected. Recycling socket.");
+                            socket.close();
                             break;
                         }
                     }
@@ -139,10 +144,14 @@ public class HomeView {
                     System.out.println("Loop");
                 }
 
-
-                oos.close();
-                ois.close();
+                try {
+                    oos.close();
+                    ois.close();
+                } catch (Exception e) {
+                    System.err.println("Error #95489578: Error shutting down connection");
+                }
                 socket.close();
+
             }
         } catch (Exception e) {
             System.err.println("Error  #1 " + e.getLocalizedMessage());
