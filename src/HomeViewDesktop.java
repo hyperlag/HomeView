@@ -200,7 +200,7 @@ public class HomeViewDesktop {
         chartPanel.setFillZoomRectangle(true);
         chartPanel.setMouseWheelEnabled(true);
         chartPanel.setBackground(Color.darkGray);
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        chartPanel.setPreferredSize(new java.awt.Dimension(750, 500));
         chartPanel.setVisible(true);
 
         frame.setContentPane(panel);
@@ -208,7 +208,7 @@ public class HomeViewDesktop {
 
 
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        frame.setSize(550, 475);
+        frame.setSize(775, 475);
         System.out.println("Starting GUI... This may take a long time");
         frame.setVisible(true);
 
@@ -275,7 +275,7 @@ public class HomeViewDesktop {
         chartPanel.setFillZoomRectangle(true);
         chartPanel.setMouseWheelEnabled(true);
         chartPanel.setBackground(Color.darkGray);
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        chartPanel.setPreferredSize(new java.awt.Dimension(750, 500));
         chartPanel.setVisible(true);
         chartPanel.setChart(createChart());
 

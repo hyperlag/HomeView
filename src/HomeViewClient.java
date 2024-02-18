@@ -37,7 +37,7 @@ public class HomeViewClient {
                     @Override
                     protected boolean removeEldestEntry(Map.Entry<Long, HomeViewDataCarrier> eldest)
                     {
-                        return this.size() > 10; //Max 100 entries
+                        return this.size() > 500; //Max entries
                     }
                 };
 
