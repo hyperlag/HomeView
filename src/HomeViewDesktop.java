@@ -43,6 +43,7 @@ public class HomeViewDesktop {
         c.gridx = 0;
         c.gridy = 0;
         panel.add(axOverL,c);
+        axOverL.setForeground(Color.RED);
 
         axOnB = new JButton("Ax On");
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -55,6 +56,7 @@ public class HomeViewDesktop {
                 current.setAirExOn(true);
             }
         } );
+        axOnB.setBackground(Color.RED);
 
         axOffB = new JButton("Ax Off");
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -67,18 +69,21 @@ public class HomeViewDesktop {
                 current.setAirExOn(false);
             }
         } );
+        axOffB.setBackground(Color.RED);
 
         axOnL = new JLabel("ON");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 3;
         panel.add(axOnL,c);
+        axOnL.setForeground(Color.RED);
 
         axOffL = new JLabel("OFF");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 3;
         panel.add(axOffL,c);
+        axOffL.setForeground(Color.RED);
 
         axLoopOn = new JTextField(7);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -100,7 +105,6 @@ public class HomeViewDesktop {
 
             }
         });
-
         panel.add(axLoopOn,c);
 
         axLoopOff = new JTextField(7);
@@ -142,6 +146,7 @@ public class HomeViewDesktop {
                 }
             }
         } );
+        axLoopB.setBackground(Color.RED);
 
         JLabel AirQualityL = new JLabel("Air Quality");
         c.fill = GridBagConstraints.HORIZONTAL;
