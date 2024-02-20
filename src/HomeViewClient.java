@@ -8,6 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * MVC remote client for the HomeView service.
+ *
+ * TODO: This is a mess of race conditions. Fix this all up and remove the sleeps.
+ */
 public class HomeViewClient {
     public static void main(String[] args) {
         System.out.println("Launching HomeView Client");
@@ -27,17 +32,19 @@ public class HomeViewClient {
 
         int serverPort = Integer.parseInt(properties.getProperty("serverPort"));
         String serverAddr = properties.getProperty("serverAddress");
+        int maxClientHistory = Integer.parseInt(properties.getProperty("maxClientHistory"));
 
         HomeViewDesktop desktop = new HomeViewDesktop();
 
         try{
             while (true) {
 
+                //Overriding the LinkedHashMap removeEldestEntry method to limit the size of the history to maxClientHistory entries.
                 LinkedHashMap<Long,HomeViewDataCarrier> history = new LinkedHashMap<>(){
                     @Override
                     protected boolean removeEldestEntry(Map.Entry<Long, HomeViewDataCarrier> eldest)
                     {
-                        return this.size() > 500; //Max entries
+                        return this.size() > maxClientHistory; //Max entries
                     }
                 };
 

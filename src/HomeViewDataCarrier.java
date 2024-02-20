@@ -1,7 +1,11 @@
 import java.io.Serializable;
 
+/**
+ * Object to hold the state of the connected devices. This is what gets passed around by the server and client.
+ */
 public class HomeViewDataCarrier implements Serializable {
     private static final long serialVersionUID = 1L;
+
     //Gas Meter Values
     private int co2 = -1;
     private int tvoc = -1;
@@ -11,12 +15,19 @@ public class HomeViewDataCarrier implements Serializable {
     private boolean airExOn = false;
     private boolean airExCycling = false;
     private long[] airExCycleOnOffMs = new long[]{-1, -1};
+
+    //Age of the data object
     private long lastUpdateEpoch;
 
     public HomeViewDataCarrier(){
         lastUpdateEpoch = System.currentTimeMillis();
     }
 
+    /**
+     * Copy constructor.
+     *
+     * @param toCopy HomeViewDataCarrier object to copy.
+     */
     public HomeViewDataCarrier(HomeViewDataCarrier toCopy){
         this.co2 = toCopy.getCo2();
         this.tvoc = toCopy.getTvoc();

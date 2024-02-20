@@ -6,11 +6,10 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.RectangleInsets;
-import org.jfree.data.time.Month;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYDataset;
+
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,21 +18,21 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 
+/**
+ * Test GUI for the remote HomeView client.
+ */
 public class HomeViewDesktop {
+
+    //Global swing objects for updating.
     private HomeViewDataCarrier current;
     private JLabel co2L;
     private JLabel tvocL;
-
     private JPanel panel;
-
     private JLabel axOnL;
-
     private JLabel axOffL;
     private JTextField axLoopOn;
     private JTextField axLoopOff;
@@ -41,17 +40,16 @@ public class HomeViewDesktop {
     private JButton axOnB;
     private JButton axOffB;
     private JLabel axOverL;
-
-    private long inputEpoch = 0;
     private ChartPanel chartPanel;
 
+    private long inputEpoch = 0;
+
+    // Running history
     private LinkedHashMap<Long,HomeViewDataCarrier> history;
 
 
 
     public HomeViewDesktop(){
-
-
         JFrame frame = new JFrame("HomeView");
 
         panel = new JPanel();
@@ -218,24 +216,40 @@ public class HomeViewDesktop {
 
     }
 
+    /**
+     * Updates the GUI with a new HomeViewDataCarrier object.
+     *
+     * @param data State object to use in the update.
+     */
     public void consume (HomeViewDataCarrier data) {
         current = data;
         update();
     }
 
+    /**
+     * Adds a list of previous data entries.
+     *
+     * @param history LinkedHashMap of history items, keyed on epoch.
+     */
     public void consumeHistory(LinkedHashMap<Long,HomeViewDataCarrier> history) {
         this.history = history;
-        Long lastKey = history.keySet().iterator().next();
-        Iterator iterator = history.keySet().iterator();
-        while (iterator.hasNext()) {
-            lastKey = (Long) iterator.next();
-        }
+//        TODO: Clean this up
+//        Long lastKey = history.keySet().iterator().next();
+//        Iterator iterator = history.keySet().iterator();
+//        while (iterator.hasNext()) {
+//            lastKey = (Long) iterator.next();
+//        }
     }
 
     public HomeViewDataCarrier getData() {
         return current;
     }
 
+    /**
+    * Update the UI.
+     *
+     * TODO: This is very inefficient. Clean this up.
+    */
     public void update() {
 
         co2L.setText("CO2: " + current.getCo2() + "ppm");
@@ -285,8 +299,6 @@ public class HomeViewDesktop {
         c.gridwidth = 3;
 
         panel.add(chartPanel,c);
-
-
 
         panel.repaint();
     }
