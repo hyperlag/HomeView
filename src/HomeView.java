@@ -100,9 +100,9 @@ public class HomeView {
                 System.out.println("View read");
                 while (socket.isConnected()) {
                     if (viewIn != null) {
-                        if (viewIn.isAirExOn()) {
+                        if (viewIn.isAirExOn() && !airEx.isOn()) {
                             airEx.on();
-                        } else {
+                        } else if (!viewIn.isAirExOn() && airEx.isOn()){ //Only kill the airEx if it is already on
                             airEx.off();
                         }
 
