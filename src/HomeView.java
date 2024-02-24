@@ -67,7 +67,7 @@ public class HomeView {
             server = new ServerSocket(serverPort);
 
             while (true) {
-                Thread.sleep(1000);
+                Thread.sleep(100); //TODO
                 long curUpdate = gasMeter.getLastUpdateTime();
                 if (lastUpdate < curUpdate) {
                     System.out.println("Gas CO2: " + gasMeter.getCo2());
@@ -88,7 +88,7 @@ public class HomeView {
                 HomeViewDataCarrier viewOut = new HomeViewDataCarrier(gasMeter, airEx);
                 oos.writeObject(viewOut);
 
-                Thread.sleep(500); //TODO deal with
+//                Thread.sleep(500); //TODO deal with
 
                 HomeViewDataCarrier viewIn = null;
                 try {
@@ -106,16 +106,15 @@ public class HomeView {
                             airEx.off();
                         }
 
-                        if (viewIn.isAirExCycling()) {
+                        if (viewIn.isAirExCycling() && !airEx.isCycling()) {
                             System.out.println("Server received a cycle command");
-                            Thread.sleep(100); //TODO
                             airEx.startCycleThread(viewIn.getAirExCycleOnOffMs()[0], viewIn.getAirExCycleOnOffMs()[1]);
-                        } else if (airEx.isCycling()) {
+                        } else if (!viewIn.isAirExCycling() && airEx.isCycling()) {
                             System.out.println("Server received a STOP cycle command");
                             airEx.stopCycleThread();
                         }
 
-                        Thread.sleep(1000);
+                        Thread.sleep(100); //TODO delay to allow server to update
                         //TODO: Process incoming object
                         System.out.println("Update read");
                         viewOut = new HomeViewDataCarrier(gasMeter, airEx);
@@ -127,7 +126,7 @@ public class HomeView {
                             socket.close();
                             break;
                         }
-                        Thread.sleep(100); //TODO
+//                        Thread.sleep(100); //TODO
                         try {
                             viewIn = (HomeViewDataCarrier) ois.readObject();
                         } catch (EOFException e) {
@@ -140,7 +139,7 @@ public class HomeView {
                             break;
                         }
                     }
-                    Thread.sleep(100); //TODO deal with this
+                    Thread.sleep(500); //TODO Trying this to allow the UI enough time to update
                     System.out.println("Loop");
                 }
 
