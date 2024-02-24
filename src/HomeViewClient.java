@@ -76,10 +76,12 @@ public class HomeViewClient {
                     desktop.consume(serverView);
 
 
-                    Thread.sleep(2000); //TODO deal with this
+                    Thread.sleep(2000); //TODO deal with this 2000
                     //Make a copy of the server view them modify it before sending back
                     //TODO: Do some stuff here
                     HomeViewDataCarrier responseView = desktop.getData();
+
+                    System.out.println("Sending cycle: " + responseView.isAirExCycling());
 
                     oos.writeObject(responseView);
                 }

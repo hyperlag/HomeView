@@ -310,8 +310,8 @@ public class HomeViewDesktop {
             co2set = new TimeSeries("CO2");
             Set<Long> keys = history.keySet();
             for (Long key : keys) {
-                co2set.add(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getCo2());
-                tvocSet.add(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getTvoc()*100);
+                co2set.addOrUpdate(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getCo2());
+                tvocSet.addOrUpdate(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getTvoc()*100);
             }
         }
 
