@@ -41,6 +41,12 @@ public class HomeViewDesktop {
     private JButton axOffB;
     private JLabel axOverL;
     private ChartPanel chartPanel;
+    private JLabel maxAutoL;
+    private JTextField co2MaxT;
+    private JTextField tvocMaxT;
+    private JLabel ppmL;
+    private JLabel ppbL;
+
 
     private long inputEpoch = 0;
 
@@ -51,6 +57,22 @@ public class HomeViewDesktop {
 
     public HomeViewDesktop(){
         JFrame frame = new JFrame("HomeView");
+        KeyListener userInputListener = new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                inputEpoch = System.currentTimeMillis();
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        };
 
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -94,65 +116,35 @@ public class HomeViewDesktop {
         axOnL = new JLabel("ON");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 2;
         panel.add(axOnL,c);
         axOnL.setForeground(Color.RED);
 
         axOffL = new JLabel("OFF");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
-        c.gridy = 3;
+        c.gridy = 2;
         panel.add(axOffL,c);
         axOffL.setForeground(Color.RED);
 
         axLoopOn = new JTextField(7);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 4;
-        axLoopOn.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                inputEpoch = System.currentTimeMillis();
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
+        c.gridy = 3;
+        axLoopOn.addKeyListener(userInputListener);
         panel.add(axLoopOn,c);
 
         axLoopOff = new JTextField(7);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
-        c.gridy = 4;
-        axLoopOff.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                inputEpoch = System.currentTimeMillis();
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
+        c.gridy = 3;
+        axLoopOff.addKeyListener(userInputListener);
         panel.add(axLoopOff,c);
 
         axLoopB = new JButton("Ax Loop");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy = 4;
         panel.add(axLoopB,c);
         axLoopB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -168,32 +160,70 @@ public class HomeViewDesktop {
         } );
         axLoopB.setBackground(Color.RED);
 
+        c.insets = new Insets(0, 40, 0, 0);
         JLabel AirQualityL = new JLabel("Air Quality");
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 7;
+        c.gridx = 2;
+        c.gridy = 1;
         AirQualityL.setForeground(Color.GREEN);
         panel.add(AirQualityL,c);
 
         co2L = new JLabel("CO2: -1 ppm");
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 8;
+        c.gridx = 2;
+        c.gridy = 2;
         co2L.setForeground(Color.GREEN);
         panel.add(co2L,c);
 
         tvocL = new JLabel("TVOC: -1 ppb");
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 9;
+        c.gridx = 2;
+        c.gridy = 3;
         tvocL.setForeground(Color.GREEN);
         panel.add(tvocL,c);
+
+        maxAutoL = new JLabel("Max Auto");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 1;
+        maxAutoL.setForeground(Color.RED);
+        panel.add(maxAutoL,c);
+
+        co2MaxT = new JTextField(5);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 2;
+        co2MaxT.addKeyListener(userInputListener);
+        panel.add(co2MaxT,c);
+
+        tvocMaxT = new JTextField(5);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 3;
+        tvocMaxT.addKeyListener(userInputListener);
+        panel.add(tvocMaxT,c);
+
+
+        c.insets = new Insets(0,0,0,0);
+        ppmL = new JLabel("ppm");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 4;
+        c.gridy = 2;
+        ppmL.setForeground(Color.RED);
+        panel.add(ppmL,c);
+
+        ppbL = new JLabel("ppb");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 4;
+        c.gridy = 3;
+        ppbL.setForeground(Color.RED);
+        panel.add(ppbL,c);
 
         chartPanel = new ChartPanel(createChart(), false);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 10;
-        c.gridwidth = 3;
+        c.gridy = 5;
+        c.gridwidth = 0;
         panel.add(chartPanel,c);
         chartPanel.setFillZoomRectangle(true);
         chartPanel.setMouseWheelEnabled(true);
@@ -202,15 +232,13 @@ public class HomeViewDesktop {
         chartPanel.setVisible(true);
 
         frame.setContentPane(panel);
-        //frame.add(panel);
-
 
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        frame.setSize(775, 475);
+        frame.setSize(800, 700);
         System.out.println("Starting GUI... This may take a long time");
         frame.setVisible(true);
 
-        frame.pack();
+        //frame.pack();
 
         System.out.println("GUI created");
 
@@ -285,6 +313,7 @@ public class HomeViewDesktop {
 
         //This is terrible. Fix this
         GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(0, 10, 0, 10);
 
         chartPanel.setFillZoomRectangle(true);
         chartPanel.setMouseWheelEnabled(true);
@@ -295,8 +324,8 @@ public class HomeViewDesktop {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 10;
-        c.gridwidth = 3;
+        c.gridy = 5;
+        c.gridwidth = 5;
 
         panel.add(chartPanel,c);
 
