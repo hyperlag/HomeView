@@ -336,7 +336,7 @@ public class HomeViewDesktop {
         TimeSeries co2set = new TimeSeries("CO2 ppm");
         TimeSeries tvocSet = new TimeSeries("TVOC ppb*100");
         if (history != null) {
-            co2set = new TimeSeries("CO2");
+            co2set = new TimeSeries("CO2 ppm");
             Set<Long> keys = history.keySet();
             for (Long key : keys) {
                 co2set.addOrUpdate(new Second(new Date(history.get(key).getLastUpdateEpoch())), history.get(key).getCo2());
